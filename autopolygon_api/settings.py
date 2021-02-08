@@ -23,7 +23,7 @@ SECRET_KEY = env('SECRET_KEY', default='secret_key')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [env('ALLOWED_HOST', default='localhost')]
+ALLOWED_HOSTS = [env('ALLOWED_HOST', default='127.0.0.1')]
 
 
 # Application definition
@@ -81,7 +81,7 @@ DATABASES = {
         'NAME': env('DB_NAME', default='autopolygon_api_development'),
         'USER': env('DB_USER', default='admin'),
         'PASSWORD': env('DB_PASSWORD', default='admin'),
-        'HOST': env('DB_HOST', default='postgres'),
+        'HOST': env('DB_HOST', default='localhost'),
     }
 }
 
