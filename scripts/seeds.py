@@ -12,6 +12,8 @@ from .layer_mappings.custom_polygon_layer_mapping import CustomPolygonLayerMappi
 
 PREFECTURES = ['北海道', '青森県', '岩手県', '宮城県', '秋田県', '山形県', '福島県', '茨城県', '栃木県', '群馬県', '埼玉県', '千葉県', '東京都', '神奈川県', '新潟県', '富山県', '石川県', '福井県', '山梨県', '長野県', '岐阜県', '静岡県', '愛知県', '三重県', '滋賀県', '京都府', '大阪府', '兵庫県', '奈良県', '和歌山県', '鳥取県', '島根県', '岡山県', '広島県', '山口県', '徳島県', '香川県', '愛媛県', '高知県', '福岡県', '佐賀県', '長崎県', '熊本県', '大分県', '宮崎県', '鹿児島県', '沖縄県']
 
+BATCH_SIZE = 1000
+
 def insert_prefectures_to_db():
 	for pref in PREFECTURES:
 		pref_obj = Prefecture(name=pref)
@@ -61,8 +63,14 @@ def insert_farmlands_to_db():
 		)
 		farmland.save(strict=True, verbose=True)
 
+def add_city_relation_to_farmlands():
+	for polygon in chunkator(Farmland.objects.all(), BATCH_SIZE):
+		city = City.objects.filter(geom__intersects=polygon.geom).first()
+		polygon.city = city
+		polygon.save()
+
 def run():
 	# insert_prefectures_to_db()
 	# insert_cities_to_db()
-	insert_farmlands_to_db()
-g
+	# insert_farmlands_to_db()
+	add_city_relation_to_farmlands()

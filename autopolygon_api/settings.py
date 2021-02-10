@@ -36,9 +36,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.gis',
-
     'rest_framework',
     'rest_framework_gis',
+    'django_extensions',
     'django_filters',
     'farmlands.apps.FarmlandsConfig',
     'prefectures.apps.PrefecturesConfig',
