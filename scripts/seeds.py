@@ -4,6 +4,7 @@ from farmlands.models import Farmland
 from prefectures.models import Prefecture
 from cities.models import City
 from chunkator import chunkator
+import xml.etree.ElementTree as ET
 import glob
 import re
 import pdb
@@ -15,14 +16,43 @@ def insert_prefectures_to_db():
 		pref_obj = Prefecture(name=pref)
 		pref_obj.save()
 
-def insert_cities_to_db(city_kml_path='data_city_polygon/city_polygon.kml'):
-	city_polygon_path = os.path.join(os.path.dirname(__file__), city_kml_path)
+def insert_cities_to_db(fude_polygon_path='data/fude_polygon/', city_polygon_kml='data_city_polygon/city_polygon.kml'):
+	city_paths = glob.glob(os.path.join(os.path.dirname(__file__), fude_polygon_path, '*/*'))
+	city_polygon_path = os.path.join(os.path.dirname(__file__), city_polygon_kml)
+
 	with open(city_polygon_path, 'r', encoding="utf-8", errors='ignore') as file:
 		doc = file.read()
 		doc = doc.replace('\t', '').replace('\n', '')
-	city_pref_list = re.findall(r'"KEN">(?P<prefecture>.+?)<.*?"CITY_ENG">(?P<city>.+?)<', doc)
-	for city_pref in city_pref_list:
-		pref_obj = Prefecture.objects.all().filter(name=city_pref[0]).first()
+
+	city_set = set()
+	for city_path in sorted(city_paths):
+		matched_pref = re.search(r'/\d{2}(?P<pref_name>.{2,4})（.*/', city_path)
+		if matched_pref == None:
+			continue
+		prefecture = matched_pref.group('pref_name')
+		prefecture_object = Prefecture.objects.all().filter(name=prefecture).first()
+		matched_city = re.search(r'\d*(?P<city_name>\D*)', os.path.basename(city_path))
+		if matched_city == None:
+			continue
+		city = matched_city.group('city_name').replace('（', '')
+		is_first_city = True
+		if ('_' in city):
+			city = city.replace('_', '')
+		if (city in city_set):
+			continue
+		multi_geometry = re.search(f'{city}.*?(<MultiGeometry>.+?</MultiGeometry>)', doc)
+		coordinates_list = re.findall('(<coordinates>.+?</coordinates>)', multi_geometry.group())
+		polygons = []
+		for coordinates in coordinates_list:
+			coordinates_extracted = re.findall('(\d{3}\.\d{1,}),(\d{2}\.\d{1,})', coordinates)
+			coordinates_extracted = tuple((float(coordinate_extracted[0]),
+											float(coordinate_extracted[1]))
+											for coordinate_extracted
+											in coordinates_extracted)
+			polygons.append(Polygon(coordinates_extracted))
+		city_object = City(name=city, prefecture=prefecture_object, geom=MultiPolygon(polygons))
+		city_object.save()
+		city_set.add(city)
 
 def run():
 	# insert_prefectures_to_db()
