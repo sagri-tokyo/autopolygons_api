@@ -3,7 +3,7 @@ from cities.models import City
 from prefectures.models import Prefecture
 
 class Farmland(models.Model):
-	city = models.ForeignKey(City, on_delete=models.CASCADE)
+	city = models.ForeignKey(City, on_delete=models.CASCADE, null=True)
 	geom = models.PolygonField(blank=False, null=False)
 
 	@property

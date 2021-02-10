@@ -23,7 +23,7 @@ SECRET_KEY = env('SECRET_KEY', default='secret_key')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [env('ALLOWED_HOST', default='127.0.0.1')]
+ALLOWED_HOSTS = [env('ALLOWED_HOST', default='127.0.0.1'), 'localhost']
 
 
 # Application definition
@@ -36,7 +36,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.gis',
-    'django_extensions',
+
     'rest_framework',
     'rest_framework_gis',
     'django_filters',
