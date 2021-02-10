@@ -30,14 +30,11 @@ def insert_cities_to_db(fude_polygon_path='data/fude_polygon/', city_polygon_kml
 		if matched_pref == None:
 			continue
 		prefecture = matched_pref.group('pref_name')
-		prefecture_object = Prefecture.objects.all().filter(name=prefecture).first()
+		pref_obj = Prefecture.objects.all().filter(name=prefecture).first()
 		matched_city = re.search(r'\d*(?P<city_name>\D*)', os.path.basename(city_path))
 		if matched_city == None:
 			continue
-		city = matched_city.group('city_name').replace('（', '')
-		is_first_city = True
-		if ('_' in city):
-			city = city.replace('_', '')
+		city = matched_city.group('city_name').replace('（', '').replace('_', '')
 		if (city in city_set):
 			continue
 		multi_geometry = re.search(f'{city}.*?(<MultiGeometry>.+?</MultiGeometry>)', doc)
@@ -45,15 +42,12 @@ def insert_cities_to_db(fude_polygon_path='data/fude_polygon/', city_polygon_kml
 		polygons = []
 		for coordinates in coordinates_list:
 			coordinates_extracted = re.findall('(\d{3}\.\d{1,}),(\d{2}\.\d{1,})', coordinates)
-			coordinates_extracted = tuple((float(coordinate_extracted[0]),
-											float(coordinate_extracted[1]))
-											for coordinate_extracted
-											in coordinates_extracted)
+			coordinates_extracted = tuple((float(coordinate_extracted[0]), float(coordinate_extracted[1])) for coordinate_extracted in coordinates_extracted)
 			polygons.append(Polygon(coordinates_extracted))
-		city_object = City(name=city, prefecture=prefecture_object, geom=MultiPolygon(polygons))
+		city_object = City(name=city, prefecture=pref_obj, geom=MultiPolygon(polygons))
 		city_object.save()
 		city_set.add(city)
 
 def run():
-	# insert_prefectures_to_db()
+	insert_prefectures_to_db()
 	insert_cities_to_db()
