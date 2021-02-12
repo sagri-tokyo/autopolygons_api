@@ -1,4 +1,5 @@
 #! /bin/bash
+cd `dirname $0`
 
 mkdir {../shp/"$1",../kml/"$1"}
 pgsql2shp -f ../shp/"$1"/output.shp -u admin -h localhost -P admin autopolygon_api_development farmlands
