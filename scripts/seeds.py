@@ -80,24 +80,25 @@ class FarmlandManager:
 			polygon.save()
 
 	def union_overlapped_farmlands(self):
-		IoU_THRESH = 0.90
+		IoU_THRESH = 0.70
 		for polygon in chunkator(Farmland.objects.all(), BATCH_SIZE):
-			if not (polygon.geom.valid):
-				continue
 			polygon.geom = polygon.geom.buffer(0)
-			overlapped_polygons = self.__calculate_intersection_union(polygon)
-			print(polygon.id)
-			for idx in range(len(overlapped_polygons)):
-				IoU = self.__calculate_IoU(overlapped_polygons[idx])
-				if IoU_THRESH < IoU:
-					print(f'union: {polygon.id}')
-					polygon.geom = polygon.geom.union(overlapped_polygons[idx].geom)
-					polygon.save()
+			try:
+				overlapped_polygons = self.__calculate_intersection_union(polygon)
+				for idx in range(len(overlapped_polygons)):
+					IoU = self.__calculate_IoU(overlapped_polygons[idx])
+					if IoU_THRESH < IoU:
+						polygon.geom = polygon.geom.union(overlapped_polygons[idx].geom)
+						if (polygon.geom.contains(overlapped_polygons[idx].geom)):
+							overlapped_polygons[idx].delete()
+						polygon.save()
+			except:
+				continue
 
 def run():
+	insert_prefectures_to_db()
+	insert_cities_to_db()
 	farm_manager = FarmlandManager()
-	# insert_prefectures_to_db()
-	# insert_cities_to_db()
 	farm_manager.insert_farmlands_to_db()
 	farm_manager.add_city_relation_to_farmlands()
 	farm_manager.union_overlapped_farmlands()
