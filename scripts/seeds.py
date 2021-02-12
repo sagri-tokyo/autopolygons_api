@@ -93,12 +93,10 @@ class FarmlandManager:
 					polygon.save()
 					overlapped_polygons[idx].delete()
 
-
-
 def run():
 	farm_manager = FarmlandManager()
 	# insert_prefectures_to_db()
 	# insert_cities_to_db()
 	farm_manager.insert_farmlands_to_db()
 	farm_manager.add_city_relation_to_farmlands()
-	# farm_manager.union_overlapped_farmlands()
+	farm_manager.union_overlapped_farmlands()

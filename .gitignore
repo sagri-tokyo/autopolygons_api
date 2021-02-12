@@ -2,6 +2,7 @@
 scripts/data/
 scripts/data_city_polygon/*
 shp/
+kml/
 
 # Mac OS
 .DS_Store
