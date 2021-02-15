@@ -54,7 +54,8 @@ def insert_cities_to_db(fude_polygon_path='data/fude_polygon/', city_polygon_kml
 
 class FarmlandManager:
 	def __calculate_intersection_union(self, polygon_obj):
-		return Farmland.objects.filter(geom__intersects=polygon_obj.geom).all(
+		query_set_by_city = Farmland.objects.filter(city_id=polygon_obj.city_id)
+		return query_set_by_city.filter(geom__intersects=polygon_obj.geom).all(
 		).annotate(intersection=Intersection(F('geom'), polygon_obj.geom), union=Union(F('geom'), polygon_obj.geom))
 
 	def __calculate_IoU(self, polygon_obj):
@@ -92,6 +93,7 @@ class FarmlandManager:
 						if (polygon.geom.contains(overlapped_polygons[idx].geom)):
 							overlapped_polygons[idx].delete()
 						polygon.save()
+						print(polygon.id)
 			except:
 				continue
 
