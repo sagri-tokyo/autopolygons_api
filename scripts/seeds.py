@@ -90,8 +90,7 @@ class FarmlandManager:
 					IoU = self.__calculate_IoU(overlapped_polygons[idx])
 					if IoU_THRESH < IoU:
 						polygon.geom = polygon.geom.union(overlapped_polygons[idx].geom)
-						if (polygon.geom.contains(overlapped_polygons[idx].geom)):
-							overlapped_polygons[idx].delete()
+						overlapped_polygons[idx].delete()
 						polygon.save()
 						print(polygon.id)
 			except:
