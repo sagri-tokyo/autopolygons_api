@@ -62,6 +62,12 @@ class FarmlandManager:
 		IoU = polygon_obj.intersection.area / polygon_obj.union.area
 		return IoU
 
+	def __union_polygons(self, polygon_obj, overlapped_polygon_obj):
+		polygon_obj.geom = polygon_obj.geom.union(overlapped_polygon_obj.geom)
+		overlapped_polygon_obj.delete()
+		polygon_obj.save()
+		print(polygon_obj.id)
+
 	def insert_farmlands_to_db(self):
 		farmlands_paths = glob.iglob(os.path.join(os.path.dirname(__file__), 'data/autopolygon/*.shp'))
 		for farmland_path in farmlands_paths:
@@ -80,26 +86,28 @@ class FarmlandManager:
 			polygon.city = city
 			polygon.save()
 
-	def union_overlapped_farmlands(self):
-		IoU_THRESH = 0.70
+	def union_overlapped_farmlands(self, IoU_THRESH=None):
 		for polygon in chunkator(Farmland.objects.all(), BATCH_SIZE):
 			polygon.geom = polygon.geom.buffer(0)
 			try:
 				overlapped_polygons = self.__calculate_intersection_union(polygon)
 				for idx in range(len(overlapped_polygons)):
-					IoU = self.__calculate_IoU(overlapped_polygons[idx])
-					if IoU_THRESH < IoU:
-						polygon.geom = polygon.geom.union(overlapped_polygons[idx].geom)
-						overlapped_polygons[idx].delete()
-						polygon.save()
-						print(polygon.id)
+					if (IoU_THRESH):
+						IoU = self.__calculate_IoU(overlapped_polygons[idx])
+						if IoU_THRESH < IoU:
+							self.__union_polygons(polygon, overlapped_polygons[idx])
+					else:
+						self.__union_polygons(polygon, overlapped_polygons[idx])
 			except:
 				continue
 
-def run():
+def run(*args):
 	insert_prefectures_to_db()
 	insert_cities_to_db()
 	farm_manager = FarmlandManager()
 	farm_manager.insert_farmlands_to_db()
 	farm_manager.add_city_relation_to_farmlands()
-	farm_manager.union_overlapped_farmlands()
+	if 'IoU' in args:
+		farm_manager.union_overlapped_farmlands(0.7)
+	else:
+		farm_manager.union_overlapped_farmlands()
