@@ -107,7 +107,7 @@ def run(*args):
 	farm_manager = FarmlandManager()
 	farm_manager.insert_farmlands_to_db()
 	farm_manager.add_city_relation_to_farmlands()
-	if 'IoU' in args:
-		farm_manager.union_overlapped_farmlands(0.7)
+	if args:
+		farm_manager.union_overlapped_farmlands(float(args[0]))
 	else:
 		farm_manager.union_overlapped_farmlands()
