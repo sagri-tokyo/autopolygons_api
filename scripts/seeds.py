@@ -69,7 +69,7 @@ class FarmlandManager:
 		print(polygon_obj.id)
 
 	def insert_farmlands_to_db(self):
-		farmlands_paths = glob.iglob(os.path.join(os.path.dirname(__file__), 'data/autopolygon/*.shp'))
+		farmlands_paths = glob.iglob(os.path.join(os.path.dirname(__file__), 'data/**/*.shp'))
 		for farmland_path in farmlands_paths:
 			farmland = CustomPolygonLayerMapping(
 				model=Farmland,
@@ -88,7 +88,6 @@ class FarmlandManager:
 
 	def union_overlapped_farmlands(self, IoU_THRESH=None):
 		for polygon in chunkator(Farmland.objects.all(), BATCH_SIZE):
-			polygon.geom = polygon.geom.buffer(0)
 			try:
 				overlapped_polygons = self.__calculate_intersection_union(polygon)
 				for idx in range(len(overlapped_polygons)):
