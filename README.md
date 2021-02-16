@@ -13,3 +13,9 @@
 
 python manage.py runscript seeds --script-args 0.7
 ```
+
+## dbに入ってる自動ポリゴンをshpとkmlに変換
+
+```
+sh scripts/create_kml_from_geom.sh <保存したい階層名> <db名>
+```
