@@ -3,6 +3,7 @@ scripts/data/
 scripts/data_city_polygon/*
 shp/
 kml/
+.env
 
 # Mac OS
 .DS_Store

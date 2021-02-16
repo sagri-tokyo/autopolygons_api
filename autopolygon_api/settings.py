@@ -13,8 +13,13 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 import os
 import environ
 
-BASE_DIR = environ.Path(__file__) - 3
+BASE_DIR = environ.Path(__file__) - 2
 env = environ.Env()
+
+READ_ENV_FILE = env.bool('DJANGO_READ_ENV_FILE', default=False)
+if READ_ENV_FILE:
+    env_file = str(BASE_DIR.path('.env'))
+    env.read_env(env_file)
 
 
 # SECURITY WARNING: keep the secret key used in production secret!
