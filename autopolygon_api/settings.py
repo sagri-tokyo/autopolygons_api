@@ -26,7 +26,7 @@ if READ_ENV_FILE:
 SECRET_KEY = env('SECRET_KEY', default='secret_key')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env('DEBUG', default=True)
 
 ALLOWED_HOSTS = [env('ALLOWED_HOST', default='127.0.0.1'), 'localhost']
 
