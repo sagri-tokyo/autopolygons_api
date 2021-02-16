@@ -53,10 +53,20 @@ def insert_cities_to_db(fude_polygon_path='data/fude_polygon/', city_polygon_kml
 		city_set.add(city)
 
 class FarmlandManager:
-	def __calculate_intersection_union(self, polygon_obj):
-		query_set_by_city = Farmland.objects.filter(city_id=polygon_obj.city_id)
-		return query_set_by_city.filter(geom__intersects=polygon_obj.geom).all(
-		).annotate(intersection=Intersection(F('geom'), polygon_obj.geom), union=Union(F('geom'), polygon_obj.geom))
+	def __filter_farmland_by_city(self, polygon_obj):
+		return Farmland.objects.filter(city_id=polygon_obj.city_id)
+
+	def __get_intersected_polygons(self, polygon_obj):
+		query_set_by_city = self.__filter_farmland_by_city(polygon_obj)
+		return query_set_by_city.filter(geom__intersects=polygon_obj.geom).all()
+
+	def __get_touched_polygons(self, polygon_obj):
+		query_set_by_city = self.__filter_farmland_by_city(polygon_obj)
+		return query_set_by_city.filter(geom__touches=polygon_obj.geom).all()
+
+	def __calculate_intersection_and_union(self, polygon_obj):
+		return self.__get_intersected_polygons(polygon_obj).annotate(
+			intersection=Intersection(F('geom'), polygon_obj.geom), union=Union(F('geom'), polygon_obj.geom))
 
 	def __calculate_IoU(self, polygon_obj):
 		IoU = polygon_obj.intersection.area / polygon_obj.union.area
@@ -89,7 +99,7 @@ class FarmlandManager:
 	def union_overlapped_farmlands(self, IoU_THRESH=None):
 		for polygon in chunkator(Farmland.objects.all(), BATCH_SIZE):
 			try:
-				overlapped_polygons = self.__calculate_intersection_union(polygon)
+				overlapped_polygons = self.__calculate_intersection_and_union(polygon)
 				for idx in range(len(overlapped_polygons)):
 					if (IoU_THRESH):
 						IoU = self.__calculate_IoU(overlapped_polygons[idx])
@@ -100,9 +110,18 @@ class FarmlandManager:
 			except:
 				continue
 
+	def union_touched_farmlands(self):
+		for polygon in chunkator(Farmland.objects.all(), BATCH_SIZE):
+			try:
+				touched_polygons = self.__get_touched_polygons(polygon)
+				for idx in range(len(touched_polygons)):
+					self.__union_polygons(polygon, touched_polygons[idx])
+			except:
+				continue
+
 def run(*args):
-	insert_prefectures_to_db()
-	insert_cities_to_db()
+	# insert_prefectures_to_db()
+	# insert_cities_to_db()
 	farm_manager = FarmlandManager()
 	farm_manager.insert_farmlands_to_db()
 	farm_manager.add_city_relation_to_farmlands()
@@ -110,3 +129,4 @@ def run(*args):
 		farm_manager.union_overlapped_farmlands(float(args[0]))
 	else:
 		farm_manager.union_overlapped_farmlands()
+	# farm_manager.union_touched_farmlands()
