@@ -10,11 +10,10 @@ import re
 from .layer_mappings.custom_polygon_layer_mapping import CustomPolygonLayerMapping
 from django.db.models import F
 from django.contrib.gis.db.models.functions import Intersection, Union, MakeValid
-from django_bulk_update.helper import bulk_update
 
 PREFECTURES = ['北海道', '青森県', '岩手県', '宮城県', '秋田県', '山形県', '福島県', '茨城県', '栃木県', '群馬県', '埼玉県', '千葉県', '東京都', '神奈川県', '新潟県', '富山県', '石川県', '福井県', '山梨県', '長野県', '岐阜県', '静岡県', '愛知県', '三重県', '滋賀県', '京都府', '大阪府', '兵庫県', '奈良県', '和歌山県', '鳥取県', '島根県', '岡山県', '広島県', '山口県', '徳島県', '香川県', '愛媛県', '高知県', '福岡県', '佐賀県', '長崎県', '熊本県', '大分県', '宮崎県', '鹿児島県', '沖縄県']
 
-BATCH_SIZE = 1000
+BATCH_SIZE = 5000
 
 def insert_prefectures_to_db():
 	for pref in PREFECTURES:
@@ -96,6 +95,7 @@ class FarmlandManager:
 			if len(target_polygon_objs) < BATCH_SIZE: continue
 			Farmland.objects.bulk_update(target_polygon_objs, fields=['city'])
 			target_polygon_objs = []
+		Farmland.objects.bulk_update(target_polygon_objs, fields=['city'])
 
 	def union_overlapped_farmlands(self, IoU_THRESH=None):
 		for polygon_obj in chunkator(Farmland.objects.all(), BATCH_SIZE):
@@ -112,8 +112,8 @@ class FarmlandManager:
 				continue
 
 def run(*args):
-	# insert_prefectures_to_db()
-	# insert_cities_to_db()
+	insert_prefectures_to_db()
+	insert_cities_to_db()
 	farm_manager = FarmlandManager()
 	farm_manager.insert_farmlands_to_db()
 	farm_manager.add_city_relation_to_farmlands()
