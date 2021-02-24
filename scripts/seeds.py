@@ -8,8 +8,6 @@ import xml.etree.ElementTree as ET
 import glob
 import re
 from .layer_mappings.custom_polygon_layer_mapping import CustomPolygonLayerMapping
-from django.db.models import F
-from django.contrib.gis.db.models.functions import Intersection, Union, MakeValid
 
 PREFECTURES = ['北海道', '青森県', '岩手県', '宮城県', '秋田県', '山形県', '福島県', '茨城県', '栃木県', '群馬県', '埼玉県', '千葉県', '東京都', '神奈川県', '新潟県', '富山県', '石川県', '福井県', '山梨県', '長野県', '岐阜県', '静岡県', '愛知県', '三重県', '滋賀県', '京都府', '大阪府', '兵庫県', '奈良県', '和歌山県', '鳥取県', '島根県', '岡山県', '広島県', '山口県', '徳島県', '香川県', '愛媛県', '高知県', '福岡県', '佐賀県', '長崎県', '熊本県', '大分県', '宮崎県', '鹿児島県', '沖縄県']
 
@@ -52,72 +50,31 @@ def insert_cities_to_db(fude_polygon_path='data/fude_polygon/', city_polygon_kml
 		city_object.save()
 		city_set.add(city)
 
-class FarmlandManager:
-	def __filter_farmland_by_city(self, polygon_obj):
-		return Farmland.objects.filter(city_id=polygon_obj.city_id)
+def insert_farmlands_to_db(self):
+	farmlands_paths = glob.iglob(os.path.join(os.path.dirname(__file__), 'data/**/*.shp'))
+	for farmland_path in farmlands_paths:
+		farmland = CustomPolygonLayerMapping(
+			model=Farmland,
+			data=farmland_path,
+			mapping={
+				'geom': 'POLYGON'
+			}
+		)
+		farmland.save(strict=True, verbose=True)
 
-	def __get_intersected_polygons(self, polygon_obj):
-		query_set_by_city = self.__filter_farmland_by_city(polygon_obj)
-		return query_set_by_city.filter(geom__intersects=polygon_obj.geom).exclude(id=polygon_obj.id).all()
-
-	def __calculate_intersection_and_union(self, polygon_obj):
-		return self.__get_intersected_polygons(polygon_obj).annotate(
-			intersection=Intersection(F('geom'), polygon_obj.geom), union=Union(F('geom'), polygon_obj.geom))
-
-	def __calculate_IoU(self, polygon_obj):
-		IoU = polygon_obj.intersection.area / polygon_obj.union.area
-		return IoU
-
-	def __union_polygons(self, polygon_obj, overlapped_polygon_obj):
-		polygon_obj.geom = polygon_obj.geom.union(overlapped_polygon_obj.geom)
-		overlapped_polygon_obj.delete()
-		polygon_obj.save()
-		print(polygon_obj.id)
-
-	def insert_farmlands_to_db(self):
-		farmlands_paths = glob.iglob(os.path.join(os.path.dirname(__file__), 'data/**/*.shp'))
-		for farmland_path in farmlands_paths:
-			farmland = CustomPolygonLayerMapping(
-				model=Farmland,
-				data=farmland_path,
-				mapping={
-					'geom': 'POLYGON'
-				}
-			)
-			farmland.save(strict=True, verbose=True)
-
-	def add_city_relation_to_farmlands(self):
-		target_polygon_objs = []
-		for polygon_obj in chunkator(Farmland.objects.all(), BATCH_SIZE):
-			city = City.objects.filter(geom__intersects=polygon_obj.geom).first()
-			polygon_obj.city = city
-			target_polygon_objs.append(polygon_obj)
-			if len(target_polygon_objs) < BATCH_SIZE: continue
-			Farmland.objects.bulk_update(target_polygon_objs, fields=['city'])
-			target_polygon_objs = []
+def add_city_relation_to_farmlands(self):
+	target_polygon_objs = []
+	for polygon_obj in chunkator(Farmland.objects.all(), BATCH_SIZE):
+		city = City.objects.filter(geom__intersects=polygon_obj.geom).first()
+		polygon_obj.city = city
+		target_polygon_objs.append(polygon_obj)
+		if len(target_polygon_objs) < BATCH_SIZE: continue
 		Farmland.objects.bulk_update(target_polygon_objs, fields=['city'])
+		target_polygon_objs = []
+	Farmland.objects.bulk_update(target_polygon_objs, fields=['city'])
 
-	def union_overlapped_farmlands(self, IoU_THRESH=None):
-		for polygon_obj in chunkator(Farmland.objects.all(), BATCH_SIZE):
-			try:
-				overlapped_polygons = self.__calculate_intersection_and_union(polygon_obj)
-				for idx in range(len(overlapped_polygons)):
-					if (IoU_THRESH):
-						IoU = self.__calculate_IoU(overlapped_polygons[idx])
-						if IoU_THRESH < IoU:
-							self.__union_polygons(polygon_obj, overlapped_polygons[idx])
-					else:
-						self.__union_polygons(polygon_obj, overlapped_polygons[idx])
-			except:
-				continue
-
-def run(*args):
+def run():
 	insert_prefectures_to_db()
 	insert_cities_to_db()
-	farm_manager = FarmlandManager()
-	farm_manager.insert_farmlands_to_db()
-	farm_manager.add_city_relation_to_farmlands()
-	if args:
-		farm_manager.union_overlapped_farmlands(float(args[0]))
-	else:
-		farm_manager.union_overlapped_farmlands()
+	insert_farmlands_to_db()
+	add_city_relation_to_farmlands()
