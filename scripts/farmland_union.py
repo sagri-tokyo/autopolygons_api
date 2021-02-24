@@ -26,10 +26,11 @@ class FarmlandUnion:
 	def __union_polygons(self, polygon_obj, overlapped_polygon_obj):
 		polygon_obj.geom = polygon_obj.geom.union(overlapped_polygon_obj.geom)
 		overlapped_polygon_obj.delete()
-		polygon_obj.save()
-		print(polygon_obj.id)
+		return polygon_obj
+
 
 	def union_overlapped_farmlands(self, IoU_THRESH=None):
+		polygon_objs = []
 		for polygon_obj in chunkator(Farmland.objects.all(), BATCH_SIZE):
 			try:
 				overlapped_polygons = self.__calculate_intersection_and_union(polygon_obj)
@@ -37,11 +38,15 @@ class FarmlandUnion:
 					if (IoU_THRESH):
 						IoU = self.__calculate_IoU(overlapped_polygons[idx])
 						if IoU_THRESH < IoU:
-							self.__union_polygons(polygon_obj, overlapped_polygons[idx])
+							polygon_obj = self.__union_polygons(polygon_obj, overlapped_polygons[idx])
 					else:
-						self.__union_polygons(polygon_obj, overlapped_polygons[idx])
+						polygon_obj = self.__union_polygons(polygon_obj, overlapped_polygons[idx])
+				polygon_objs.append(polygon_obj)
 			except:
 				continue
+			if len(polygon_objs) < BATCH_SIZE: continue
+			Polygon.objects.bulk_update(polygon_objs, fields=['geom'])
+		Polygon.objects.bulk_update(polygon_objs, fields=['geom'])
 
 def run(*args):
 	farm_uni = FarmlandUnion()

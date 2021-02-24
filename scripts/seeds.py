@@ -14,9 +14,10 @@ PREFECTURES = ['北海道', '青森県', '岩手県', '宮城県', '秋田県', 
 BATCH_SIZE = 5000
 
 def insert_prefectures_to_db():
+	pref_objs = []
 	for pref in PREFECTURES:
-		pref_obj = Prefecture(name=pref)
-		pref_obj.save()
+		pref_objs.append(Prefecture(name=pref))
+	Prefecture.objects.bulk_create(pref_objs)
 
 def insert_cities_to_db(fude_polygon_path='data/fude_polygon/', city_polygon_kml='data_city_polygon/city_polygon.kml'):
 	city_paths = glob.glob(os.path.join(os.path.dirname(__file__), fude_polygon_path, '*/*'))
@@ -27,6 +28,7 @@ def insert_cities_to_db(fude_polygon_path='data/fude_polygon/', city_polygon_kml
 		doc = doc.replace('\t', '').replace('\n', '')
 
 	city_set = set()
+	city_objs = []
 	for city_path in sorted(city_paths):
 		matched_pref = re.search(r'/\d{2}(?P<pref_name>.{2,4})（.*/', city_path)
 		if matched_pref == None:
@@ -46,11 +48,11 @@ def insert_cities_to_db(fude_polygon_path='data/fude_polygon/', city_polygon_kml
 			coordinates_extracted = re.findall('(\d{3}\.\d{1,}),(\d{2}\.\d{1,})', coordinates)
 			coordinates_extracted = tuple((float(coordinate_extracted[0]), float(coordinate_extracted[1])) for coordinate_extracted in coordinates_extracted)
 			polygons.append(Polygon(coordinates_extracted))
-		city_object = City(name=city, prefecture=pref_obj, geom=MultiPolygon(polygons))
-		city_object.save()
+		city_objs.append(City(name=city, prefecture=pref_obj, geom=MultiPolygon(polygons)))
 		city_set.add(city)
+	City.objects.bulk_create(city_objs)
 
-def insert_farmlands_to_db(self):
+def insert_farmlands_to_db():
 	farmlands_paths = glob.iglob(os.path.join(os.path.dirname(__file__), 'data/**/*.shp'))
 	for farmland_path in farmlands_paths:
 		farmland = CustomPolygonLayerMapping(
@@ -62,7 +64,7 @@ def insert_farmlands_to_db(self):
 		)
 		farmland.save(strict=True, verbose=True)
 
-def add_city_relation_to_farmlands(self):
+def add_city_relation_to_farmlands():
 	target_polygon_objs = []
 	for polygon_obj in chunkator(Farmland.objects.all(), BATCH_SIZE):
 		city = City.objects.filter(geom__intersects=polygon_obj.geom).first()
