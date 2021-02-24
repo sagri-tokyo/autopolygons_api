@@ -76,7 +76,7 @@ def add_city_relation_to_farmlands():
 	Farmland.objects.bulk_update(target_polygon_objs, fields=['city'])
 
 def run():
-	insert_prefectures_to_db()
-	insert_cities_to_db()
+	# insert_prefectures_to_db()
+	# insert_cities_to_db()
 	insert_farmlands_to_db()
 	add_city_relation_to_farmlands()

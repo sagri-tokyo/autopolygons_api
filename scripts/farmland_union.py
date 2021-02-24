@@ -1,9 +1,9 @@
 from chunkator import chunkator
 from django.db.models import F
 from django.contrib.gis.db.models.functions import Intersection, Union
-from django.contrib.gis.geos import Polygon
 from farmlands.models import Farmland
 from cities.models import City
+from farmlands.models import Farmland
 
 BATCH_SIZE = 5000
 
@@ -24,29 +24,23 @@ class FarmlandUnion:
 		return IoU
 
 	def __union_polygons(self, polygon_obj, overlapped_polygon_obj):
-		polygon_obj.geom = polygon_obj.geom.union(overlapped_polygon_obj.geom)
+		polygon_obj.geom = overlapped_polygon_obj.union
+		polygon_obj.save()
 		overlapped_polygon_obj.delete()
-		return polygon_obj
-
 
 	def union_overlapped_farmlands(self, IoU_THRESH=None):
-		polygon_objs = []
 		for polygon_obj in chunkator(Farmland.objects.all(), BATCH_SIZE):
 			try:
-				overlapped_polygons = self.__calculate_intersection_and_union(polygon_obj)
-				for idx in range(len(overlapped_polygons)):
-					if (IoU_THRESH):
-						IoU = self.__calculate_IoU(overlapped_polygons[idx])
-						if IoU_THRESH < IoU:
-							polygon_obj = self.__union_polygons(polygon_obj, overlapped_polygons[idx])
-					else:
-						polygon_obj = self.__union_polygons(polygon_obj, overlapped_polygons[idx])
-				polygon_objs.append(polygon_obj)
+				intersected_polygons = self.__calculate_intersection_and_union(polygon_obj)
+				for overlapped_polygon in intersected_polygons:
+					if IoU_THRESH is None:
+						self.__union_polygons(polygon_obj, overlapped_polygon)
+						continue
+					IoU = self.__calculate_IoU(overlapped_polygon)
+					if IoU_THRESH < IoU:
+						self.__union_polygons(polygon_obj, overlapped_polygon)
 			except:
 				continue
-			if len(polygon_objs) < BATCH_SIZE: continue
-			Polygon.objects.bulk_update(polygon_objs, fields=['geom'])
-		Polygon.objects.bulk_update(polygon_objs, fields=['geom'])
 
 def run(*args):
 	farm_uni = FarmlandUnion()
