@@ -19,3 +19,9 @@ python manage.py runscript seeds --script-args 0.7
 ```
 sh scripts/create_kml_from_geom.sh <保存したい階層名> <db名>
 ```
+
+## farmland tableを初期化し、データを入れ直す
+```
+# 引数はdb名
+sh reset_farmland_and_insert_new_data.sh autopolygon_api_development
+```
