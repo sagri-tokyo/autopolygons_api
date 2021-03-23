@@ -1,6 +1,14 @@
 # autopolygons_api
 自動ポリゴンで作成されたポリゴンを提供するAPI
 
+## 環境構築
+
+```console
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
 ## seedデータ挿入
 
 - data/にモデルの予測をshpファイルにしたフォルダを置く
