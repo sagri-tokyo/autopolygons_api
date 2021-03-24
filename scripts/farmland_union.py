@@ -30,17 +30,14 @@ class FarmlandUnion:
 
 	def union_overlapped_farmlands(self, IoU_THRESH=None):
 		for polygon_obj in chunkator(Farmland.objects.all(), BATCH_SIZE):
-			try:
-				intersected_polygons = self.__calculate_intersection_and_union(polygon_obj)
-				for overlapped_polygon in intersected_polygons:
-					if IoU_THRESH is None:
-						self.__union_polygons(polygon_obj, overlapped_polygon)
-						continue
-					IoU = self.__calculate_IoU(overlapped_polygon)
-					if IoU_THRESH < IoU:
-						self.__union_polygons(polygon_obj, overlapped_polygon)
-			except:
-				continue
+			intersected_polygons = self.__calculate_intersection_and_union(polygon_obj)
+			for overlapped_polygon in intersected_polygons:
+				if IoU_THRESH is None:
+					self.__union_polygons(polygon_obj, overlapped_polygon)
+					continue
+				IoU = self.__calculate_IoU(overlapped_polygon)
+				if IoU_THRESH < IoU:
+					self.__union_polygons(polygon_obj, overlapped_polygon)
 
 def run(*args):
 	farm_uni = FarmlandUnion()
