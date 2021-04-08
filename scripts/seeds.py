@@ -27,10 +27,9 @@ def insert_cities_to_db(fude_polygon_path='data/fude_polygon/', city_polygon_kml
 	Todo: 日本のkmlを前提としているため、海外の場合は書き直す必要あり(湯原)
 	"""
 
-	city_paths = glob.glob(os.path.join(os.path.dirname(__file__), fude_polygon_path, '*/*'))
-	city_polygon_path = os.path.join(os.path.dirname(__file__), city_polygon_kml)
+	city_paths = glob.glob(fude_polygon_path)
 
-	with open(city_polygon_path, 'r', encoding="utf-8", errors='ignore') as file:
+	with open(city_polygon_kml, 'r', encoding="utf-8", errors='ignore') as file:
 		doc = file.read()
 		doc = doc.replace('\t', '').replace('\n', '')
 
@@ -61,7 +60,7 @@ def insert_cities_to_db(fude_polygon_path='data/fude_polygon/', city_polygon_kml
 
 
 def insert_farmlands_to_db():
-	farmlands_paths = glob.iglob(os.path.join(os.path.dirname(__file__), 'data/**/*.shp'))
+	farmlands_paths = glob.iglob('data/**/*.shp')
 	for farmland_path in farmlands_paths:
 		farmland = CustomPolygonLayerMapping(
 			model=Farmland,

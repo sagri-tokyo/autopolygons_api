@@ -20,7 +20,7 @@ sh scripts/create_db.sh
 
 ## seedデータ挿入
 
-1. data/にモデルの予測をshpファイルにしたフォルダを置く
+1. data/**/にモデルの予測をshpファイルにしたフォルダを置く
 2. data/fude_polygon/に筆ポリゴンデータを置く
 3. data/data_city_polygon/に市町村kmlを置く(市町村の境界情報)
 
