@@ -3,8 +3,9 @@ USER root
 
 ENV APP /app
 
-RUN apt-get update
-RUN apt-get -y --no-install-recommends apt-utils locales && \
+RUN apt-get update \
+    && apt-get -y --no-install-recommends apt-utils \
+    locales \
     binutils \
     libproj-dev \
     gdal-bin \
