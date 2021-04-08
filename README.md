@@ -20,7 +20,7 @@ sh scripts/create_db.sh
 
 ## seedデータ挿入
 
-1. data/**/にモデルの予測をshpファイルにしたフォルダを置く
+1. data/**/にモデルの予測をshpファイルにしたフォルダを置く(現状はテストshpを置いている)
 2. data/fude_polygon/に筆ポリゴンデータを置く
 3. data/data_city_polygon/に市町村kmlを置く(市町村の境界情報)
 
@@ -53,7 +53,7 @@ Dockerの場合
 # --script-argsを指定すると数字に応じて結合するポリゴンのIoUの閾値が決まる。
 # 指定しなければintersectsしていれば結合される。
 # intersectsの意味はこちらを参照。http://www.pragmatica.jp/fme/references/ReferenceSpatialRelations.html
-docker-compose run --rm unionpolygon_app python manage.py runscript farmland_union.py --script-args 0.1
+docker-compose run --rm unionpolygon_app python manage.py runscript farmland_union --script-args 0.1
 ```
 
 ## dbに入ってる自動ポリゴンをshpとkmlに変換
