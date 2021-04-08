@@ -2,7 +2,7 @@
 
 自動ポリゴンで作成されたポリゴンを提供するAPI
 
-## 環境構築(Docker使わない場合)
+## 環境構築(Dockerを使わない場合)
 
 ```console
 python3 -m venv .venv
@@ -11,7 +11,6 @@ pip install -r requirements.txt
 ```
 
 Gdalをインストール
-
 
 ## DB作成
 
@@ -26,7 +25,6 @@ sh scripts/create_db.sh
 3. data/data_city_polygon/に市町村kmlを置く(市町村の境界情報)
 
 海外の農地でprefectureやstate、cityの境界情報が手に入らない場合は2と3はスキップ
-
 
 ```console
 # 作成したshpファイルをまずDBに入れる
@@ -58,29 +56,27 @@ Dockerの場合
 docker-compose run --rm unionpolygon_app python manage.py runscript farmland_union.py --script-args 0.1
 ```
 
-
 ## dbに入ってる自動ポリゴンをshpとkmlに変換
 
 ```console
-sh scripts/create_kml_from_geom.sh <保存したい階層名> <db名>
+sh scripts/create_kml_from_geom.sh <保存したい階層名> autopolygon_api
 ```
 
 Dockerの場合
 
 ```console
-docker-compose --rm unionpolygon_app sh scripts/create_kml_from_geom.sh <保存したい階層名> <db名>
+docker-compose --rm unionpolygon_app sh scripts/create_kml_from_geom.sh <保存したい階層名> autopolygon_api
 ```
 
 ## farmland tableを初期化し、データを入れ直す
 
 ```console
 # 引数はdb名
-sh reset_farmland_and_insert_new_data.sh autopolygon_api_development
+sh reset_farmland_and_insert_new_data.sh autopolygon_api
 ```
-
 
 Dockerの場合
 
 ```console
-docker-compose --rm unionpolygon_app sh reset_farmland_and_insert_new_data.sh <db名>
+docker-compose --rm unionpolygon_app sh reset_farmland_and_insert_new_data.sh autopolygon_api
 ```

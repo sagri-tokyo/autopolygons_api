@@ -89,10 +89,10 @@ WSGI_APPLICATION = 'autopolygon_api.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': env('DB_NAME', default='autopolygon_api_development'),
-        'USER': env('DB_USER', default='admin'),
+        'NAME': env('DB_NAME', default='autopolygon_api'),
+        'USER': env('DB_USER', default='postgres'),
         'PASSWORD': env('DB_PASSWORD', default='admin'),
-        'HOST': env('DB_HOST', default='localhost'),
+        'HOST': env('DB_HOST', default='unionpolygon_postgres'),
     }
 }
 
