@@ -4,6 +4,7 @@ scripts/data_city_polygon/*
 shp/
 kml/
 .env
+!.gitkeep
 
 # Mac OS
 .DS_Store

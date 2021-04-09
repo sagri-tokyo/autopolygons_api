@@ -20,7 +20,7 @@ sh scripts/create_db.sh
 
 ## seedデータ挿入
 
-1. data/**/にモデルの予測をshpファイルにしたフォルダを置く(現状はテストshpを置いている)
+1. data/**/にモデルの予測をshpファイルにしたフォルダを置く
 2. data/fude_polygon/に筆ポリゴンデータを置く
 3. data/data_city_polygon/に市町村kmlを置く(市町村の境界情報)
 
@@ -59,24 +59,13 @@ docker-compose run --rm unionpolygon_app python manage.py runscript farmland_uni
 ## dbに入ってる自動ポリゴンをshpとkmlに変換
 
 ```console
-sh scripts/create_kml_from_geom.sh <保存したい階層名> autopolygon_api
+sh scripts/create_kml_from_geom.sh <保存したい階層名> autopolygon_api (db名)
 ```
 
 Dockerの場合
 
 ```console
-docker-compose --rm unionpolygon_app sh scripts/create_kml_from_geom.sh <保存したい階層名> autopolygon_api
-```
-
-## farmland tableを初期化し、データを入れ直す
-
-```console
-# 引数はdb名
-sh reset_farmland_and_insert_new_data.sh autopolygon_api
-```
-
-Dockerの場合
-
-```console
-docker-compose --rm unionpolygon_app sh reset_farmland_and_insert_new_data.sh autopolygon_api
+# ローカル
+mkdir {shp,kml} (shpとkml保存用のdirsを作る)　
+docker-compose run --rm unionpolygon_app sh scripts/create_kml_from_geom.sh autopolygon_api (db名)
 ```

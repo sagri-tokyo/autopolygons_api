@@ -30,7 +30,7 @@ class FarmlandUnion:
 
 	def union_overlapped_farmlands(self, IoU_THRESH=None):
 		for polygon_obj in chunkator(Farmland.objects.all(), BATCH_SIZE):
-			# TODO: solve self intersection error
+			# TODO: solve self intersection error(湯原)
 			try:
 				intersected_polygons = self.__calculate_intersection_and_union(polygon_obj)
 				for overlapped_polygon in intersected_polygons:

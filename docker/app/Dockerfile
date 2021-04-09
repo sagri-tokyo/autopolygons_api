@@ -12,6 +12,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends apt-utils \
     python3-pyqt5 \
     vim less \
     build-essential \
+    postgresql \
+    postgresql-contrib \
+    postgis \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 RUN localedef -f UTF-8 -i ja_JP ja_JP.UTF-8
