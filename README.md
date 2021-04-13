@@ -10,6 +10,12 @@
 
 海外の農地でprefectureやstate、cityの境界情報が手に入らない場合は2と3はスキップ
 
+docker container作成、起動
+
+```console
+docker-compose up -d
+```
+
 ```console
 # 作成したshpファイルをまずDBに入れる
 docker-compose run --rm unionpolygon_app python manage.py runscript seeds
