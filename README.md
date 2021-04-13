@@ -1,22 +1,6 @@
 # autopolygons_api
 
-自動ポリゴンで作成されたポリゴンを提供するAPI
-
-## 環境構築(Dockerを使わない場合)
-
-```console
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-```
-
-Gdalをインストール
-
-## DB作成
-
-```console
-sh scripts/create_db.sh
-```
+自動ポリゴンで作成されたポリゴンをつなぎ合わせるためのプロジェクト
 
 ## seedデータ挿入
 
@@ -25,13 +9,6 @@ sh scripts/create_db.sh
 3. data/data_city_polygon/に市町村kmlを置く(市町村の境界情報)
 
 海外の農地でprefectureやstate、cityの境界情報が手に入らない場合は2と3はスキップ
-
-```console
-# 作成したshpファイルをまずDBに入れる
-python manage.py runscript seeds
-```
-
-Dockerの場合
 
 ```console
 # 作成したshpファイルをまずDBに入れる
@@ -44,25 +21,10 @@ docker-compose run --rm unionpolygon_app python manage.py runscript seeds
 # --script-argsを指定すると数字に応じて結合するポリゴンのIoUの閾値が決まる。
 # 指定しなければintersectsしていれば結合される。
 # intersectsの意味はこちらを参照。http://www.pragmatica.jp/fme/references/ReferenceSpatialRelations.html
-python manage.py runscript farmland_union.py --script-args 0.1
-```
-
-Dockerの場合
-
-```console
-# --script-argsを指定すると数字に応じて結合するポリゴンのIoUの閾値が決まる。
-# 指定しなければintersectsしていれば結合される。
-# intersectsの意味はこちらを参照。http://www.pragmatica.jp/fme/references/ReferenceSpatialRelations.html
 docker-compose run --rm unionpolygon_app python manage.py runscript farmland_union --script-args 0.1
 ```
 
 ## dbに入ってる自動ポリゴンをshpとkmlに変換
-
-```console
-sh scripts/create_kml_from_geom.sh <保存したい階層名> autopolygon_api (db名)
-```
-
-Dockerの場合
 
 ```console
 # ローカル
