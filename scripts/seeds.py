@@ -19,11 +19,17 @@ def insert_prefectures_to_db():
 		pref_objs.append(Prefecture(name=pref))
 	Prefecture.objects.bulk_create(pref_objs)
 
-def insert_cities_to_db(fude_polygon_path='data/fude_polygon/', city_polygon_kml='data_city_polygon/city_polygon.kml'):
-	city_paths = glob.glob(os.path.join(os.path.dirname(__file__), fude_polygon_path, '*/*'))
-	city_polygon_path = os.path.join(os.path.dirname(__file__), city_polygon_kml)
 
-	with open(city_polygon_path, 'r', encoding="utf-8", errors='ignore') as file:
+def insert_cities_to_db(fude_polygon_path='data/fude_polygon/', city_polygon_kml='data_city_polygon/city_polygon.kml'):
+	"""
+
+	市の境界情報をkmlをparseし、dbに入れる関数
+	Todo: 日本のkmlを前提としているため、海外の場合は書き直す必要あり(湯原)
+	"""
+
+	city_paths = glob.glob(fude_polygon_path)
+
+	with open(city_polygon_kml, 'r', encoding="utf-8", errors='ignore') as file:
 		doc = file.read()
 		doc = doc.replace('\t', '').replace('\n', '')
 
@@ -52,8 +58,9 @@ def insert_cities_to_db(fude_polygon_path='data/fude_polygon/', city_polygon_kml
 		city_set.add(city)
 	City.objects.bulk_create(city_objs)
 
+
 def insert_farmlands_to_db():
-	farmlands_paths = glob.iglob(os.path.join(os.path.dirname(__file__), 'data/**/*.shp'))
+	farmlands_paths = glob.iglob('data/**/*.shp')
 	for farmland_path in farmlands_paths:
 		farmland = CustomPolygonLayerMapping(
 			model=Farmland,
@@ -76,7 +83,7 @@ def add_city_relation_to_farmlands():
 	Farmland.objects.bulk_update(target_polygon_objs, fields=['city'])
 
 def run():
-	# insert_prefectures_to_db()
-	# insert_cities_to_db()
+	# insert_prefectures_to_db() # 県情報が分かる場合はこちらも実行
+	# insert_cities_to_db()　 # 市情報が境界情報も含めて分かる場合はこちらも実行
 	insert_farmlands_to_db()
-	add_city_relation_to_farmlands()
+	# add_city_relation_to_farmlands()　

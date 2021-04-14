@@ -1,9 +1,11 @@
 # project unique
 scripts/data/
 scripts/data_city_polygon/*
+data/*
 shp/
 kml/
 .env
+!.gitkeep
 
 # Mac OS
 .DS_Store
