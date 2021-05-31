@@ -2,7 +2,7 @@
 
 This is a repository for a trail of patching seperated farmland polygons across images
 
-## seedデータ挿入
+## Insert seed data
 
 1. put the folder which has model prediction as shp file in data/**/.
 2. put fude-polygon data in data/fude_polygon/.
@@ -35,7 +35,6 @@ docker-compose run --rm unionpolygon_app python manage.py runscript farmland_uni
 ## Convert polygons in DB to shape and kml files
 
 ```console
-# ローカル
-mkdir {shp,kml} (shpとkml保存用のdirsを作る)　
-docker-compose run --rm unionpolygon_app sh scripts/create_kml_from_geom.sh autopolygon_api (db名)
+mkdir {shp,kml} (create folders for shape file and kml file)　
+docker-compose run --rm unionpolygon_app sh scripts/create_kml_from_geom.sh autopolygon_api (name of db)
 ```
