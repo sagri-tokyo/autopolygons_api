@@ -1,36 +1,38 @@
 # autopolygons_api
 
-自動ポリゴンで作成されたポリゴンをつなぎ合わせるためのプロジェクト
+This is a repository for a trail of patching seperated farmland polygons across images
 
 ## seedデータ挿入
 
-1. data/**/にモデルの予測をshpファイルにしたフォルダを置く
-2. data/fude_polygon/に筆ポリゴンデータを置く
-3. data/data_city_polygon/に市町村kmlを置く(市町村の境界情報)
+1. put the folder which has model prediction as shp file in data/**/.
+2. put fude-polygon data in data/fude_polygon/.
+3. put city kml in data/data_city_polygon/ (city boundary information)
 
-海外の農地でprefectureやstate、cityの境界情報が手に入らない場合は2と3はスキップ
-
-docker container作成、起動
+If you create polygons other than in Japan, skip 2 and 3 steps.
+Create docker container
 
 ```console
 docker-compose up -d
 ```
 
+Insert shape files of farmland polygons into DB
 ```console
-# 作成したshpファイルをまずDBに入れる
 docker-compose run --rm unionpolygon_app python manage.py runscript seeds
 ```
 
-## dbに入っているfarmlandsを結合する
+## Patch polygons in DB
+
+Pass float number after --script-args(This number is an IoU theshold to patch)
+
+If you don't pass that, it patches when polygons are intersected
+
+Reference of intersection(in Japanse). http://www.pragmatica.jp/fme/references/ReferenceSpatialRelations.html
 
 ```console
-# --script-argsを指定すると数字に応じて結合するポリゴンのIoUの閾値が決まる。
-# 指定しなければintersectsしていれば結合される。
-# intersectsの意味はこちらを参照。http://www.pragmatica.jp/fme/references/ReferenceSpatialRelations.html
 docker-compose run --rm unionpolygon_app python manage.py runscript farmland_union --script-args 0.1
 ```
 
-## dbに入ってる自動ポリゴンをshpとkmlに変換
+## Convert polygons in DB to shape and kml files
 
 ```console
 # ローカル
