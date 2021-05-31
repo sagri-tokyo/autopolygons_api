@@ -1,6 +1,5 @@
 # project unique
 scripts/data/
-scripts/data_city_polygon/*
 data/*
 shp/
 kml/
