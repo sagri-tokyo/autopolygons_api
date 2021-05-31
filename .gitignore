@@ -1,6 +1,5 @@
 # project unique
 scripts/data/
-data/*
 shp/
 kml/
 .env
