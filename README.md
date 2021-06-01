@@ -22,7 +22,7 @@ docker-compose run --rm unionpolygon_app python manage.py runscript seeds
 
 ## Merge split polygons into one in DB
 
-Pass float number after --script-args(This number is an IoU theshold to patch)
+Pass float number after --script-args(This number is an IoU theshold to merge)
 
 If you don't pass that, it merges when polygons are intersected
 
