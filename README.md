@@ -20,11 +20,11 @@ Insert shape files of farmland polygons into DB
 docker-compose run --rm unionpolygon_app python manage.py runscript seeds
 ```
 
-## Patch polygons in DB
+## Merge split polygons into one in DB
 
 Pass float number after --script-args(This number is an IoU theshold to patch)
 
-If you don't pass that, it patches when polygons are intersected
+If you don't pass that, it merges when polygons are intersected
 
 Reference of intersection(in Japanse). http://www.pragmatica.jp/fme/references/ReferenceSpatialRelations.html
 
