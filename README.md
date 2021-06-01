@@ -20,7 +20,7 @@ Insert shape files of farmland polygons into DB
 docker-compose run --rm unionpolygon_app python manage.py runscript seeds
 ```
 
-## Merge split polygons into one in DB
+## Merge split polygons into one polygon in DB
 
 Pass float number after --script-args(This number is an IoU theshold to merge)
 
