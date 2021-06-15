@@ -9,6 +9,7 @@ This is a repository for a trail of patching seperated farmland polygons across 
 3. put city kml in data/data_city_polygon/ (city boundary information)
 
 If you create polygons other than in Japan, skip 2nd and 3rd steps.
+
 Create docker container
 
 ```console
