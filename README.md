@@ -35,7 +35,9 @@ docker-compose run --rm unionpolygon_app python manage.py runscript farmland_uni
 
 ## Convert polygons in DB to shape and kml files
 
+ Create folders for shape file and kml file
+Then extract data as shape and kml files from database
 ```console
-mkdir {shp,kml} (create folders for shape file and kml file)　
-docker-compose run --rm unionpolygon_app sh scripts/create_kml_from_geom.sh autopolygon_api (name of db)
+mkdir {shp,kml}
+docker-compose run --rm unionpolygon_app sh scripts/create_kml_from_geom.sh autopolygon_api
 ```
