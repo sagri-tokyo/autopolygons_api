@@ -39,7 +39,7 @@ If you don't pass that, it merges when polygons are intersected
 Reference of intersection(in Japanse). http://www.pragmatica.jp/fme/references/ReferenceSpatialRelations.html
 
 ```console
-docker-compose run --rm unionpolygon_app python manage.py runscript farmland_union --script-args 0.1
+docker-compose run --rm unionpolygon_app python manage.py runscript farmland_union --script-args 0.05
 ```
 
 ## Convert polygons in DB to shape and kml files
