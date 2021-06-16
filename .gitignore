@@ -1,12 +1,12 @@
 # project unique
-scripts/data/
 shp/
 kml/
-.env
 !.gitkeep
+data/test/
 
 # Mac OS
 .DS_Store
+docker-compose.override.yml
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

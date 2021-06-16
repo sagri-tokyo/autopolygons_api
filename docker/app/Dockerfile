@@ -1,4 +1,4 @@
-FROM python:3.7-slim
+FROM python:3.9
 USER root
 
 ENV APP /app
@@ -34,3 +34,5 @@ RUN pip3 install --upgrade pip setuptools
 
 COPY . .
 RUN pip3 install -r requirements.txt
+EXPOSE 8000
+CMD "./docker/app/runserver.sh"
