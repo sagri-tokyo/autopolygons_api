@@ -1,8 +1,8 @@
 # project unique
-scripts/data/
 shp/
 kml/
 !.gitkeep
+data/test/
 
 # Mac OS
 .DS_Store
