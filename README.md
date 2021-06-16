@@ -1,6 +1,14 @@
 # autopolygons_api
 
-This is a repository for a trail of patching seperated farmland polygons across images
+This is a repository for a trail of patching separated farmland polygons across images
+
+
+## Preparation Mac user with M1 chip
+
+```console
+ln -s docker-compose.arm64.yml docker-compose.override.yml
+```
+
 
 ## Insert seed data
 

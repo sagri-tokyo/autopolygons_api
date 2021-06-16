@@ -1,0 +1,6 @@
+version: "3"
+services:
+  unionpolygon_postgres:
+    build: ./docker/
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: 'trust'
