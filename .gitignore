@@ -2,7 +2,6 @@
 scripts/data/
 shp/
 kml/
-.env
 !.gitkeep
 
 # Mac OS

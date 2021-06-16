@@ -12,7 +12,7 @@ ln -s docker-compose.arm64.yml docker-compose.override.yml
 
 ## Insert seed data
 
-1. put the folder which has model prediction as shp file in data/**/.
+1. put the folder that has model prediction with every file you created in data/**/.
 2. put fude-polygon data in data/fude_polygon/.
 3. put city kml in data/data_city_polygon/ (city boundary information)
 
@@ -25,13 +25,14 @@ docker-compose up -d
 ```
 
 Insert shape files of farmland polygons into DB
+
 ```console
 docker-compose run --rm unionpolygon_app python manage.py runscript seeds
 ```
 
 ## Merge split polygons into one polygon in DB
 
-Pass float number after --script-args(This number is an IoU theshold to merge)
+Pass float number after --script-args(This number is an IoU theshold to merge polygons)
 
 If you don't pass that, it merges when polygons are intersected
 
@@ -45,6 +46,7 @@ docker-compose run --rm unionpolygon_app python manage.py runscript farmland_uni
 
  Create folders for shape file and kml file
 Then extract data as shape and kml files from database
+
 ```console
 mkdir {shp,kml}
 docker-compose run --rm unionpolygon_app sh scripts/create_kml_from_geom.sh autopolygon_api
