@@ -44,7 +44,7 @@ docker-compose run --rm unionpolygon_app python manage.py runscript farmland_uni
 
 ## When you'd like to delete data in database and retry concatenation of polygons
 
-Make sure unionpolygon_postgres is up and running
+Make sure unionpolygon_postgres container is up and running
 The argument is an IoU threshold
 
 ```console
