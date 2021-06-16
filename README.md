@@ -42,6 +42,15 @@ Reference of intersection(in Japanse). http://www.pragmatica.jp/fme/references/R
 docker-compose run --rm unionpolygon_app python manage.py runscript farmland_union --script-args 0.05
 ```
 
+## When you'd like to delete data in database and retry concatenation of polygons
+
+Make sure unionpolygon_postgres is up and running
+The argument is an IoU threshold
+
+```console
+sh insert_seed_and_concatenate_polygons.sh 0.05
+```
+
 ## Convert polygons in DB to shape and kml files
 
  Create folders for shape file and kml file

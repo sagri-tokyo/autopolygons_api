@@ -27,6 +27,7 @@ class FarmlandUnion:
 		polygon_obj.geom = overlapped_polygon_obj.union
 		polygon_obj.save()
 		overlapped_polygon_obj.delete()
+		print(f"concatenate polygons: {polygon_obj.id}")
 
 	def union_overlapped_farmlands(self, IoU_THRESH=None):
 		for polygon_obj in chunkator(Farmland.objects.all(), BATCH_SIZE):
