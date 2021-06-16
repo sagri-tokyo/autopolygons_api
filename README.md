@@ -5,6 +5,9 @@ This is a repository for a trail of patching separated farmland polygons across 
 
 ## Preparation for Mac user with M1 chip
 
+Skip this process, if you aren't a Mac user.
+
+
 ```console
 ln -s docker-compose.arm64.yml docker-compose.override.yml
 ```
