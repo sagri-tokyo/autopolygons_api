@@ -27,7 +27,13 @@ Create docker container
 docker-compose up -d
 ```
 
-Insert shape files of farmland polygons into DB
+## When db wasn't created
+
+```console
+docker exec -it unionpolygon_postgres bash -c "sh init.sh"
+```
+
+## Insert shape files of farmland polygons into DB
 
 ```console
 docker-compose run --rm unionpolygon_app python manage.py runscript seeds
