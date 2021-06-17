@@ -4,3 +4,4 @@ ENV LANG="ja_JP.UTF-8" \
     LANGUAGE="ja_JP:ja" \
     LC_ALL="ja_JP.UTF-8"
 COPY reset_farmland_table.sh .
+COPY docker-entrypoint-initdb.d/init.sh .
